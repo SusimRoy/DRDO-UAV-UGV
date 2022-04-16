@@ -70,10 +70,6 @@ class FeedImage():
         img = img.filter(ImageFilter.UnsharpMask(radius = 3, percent = 200, threshold = 5))
         img = np.array(img)
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # img_blur = cv2.GaussianBlur(img_gray, (3,3), 0)
-        sobelx = cv2.Sobel(src=img_gray, ddepth=cv2.CV_64F, dx=1, dy=0, ksize=5)
-        sobely = cv2.Sobel(src=img_gray, ddepth=cv2.CV_64F, dx=0, dy=1, ksize=5) 
-        sobelxy = cv2.Sobel(src=img_gray, ddepth=cv2.CV_64F, dx=1, dy=1, ksize=5)
         edges = cv2.Canny(image=img_gray, threshold1=canny_thresh1, threshold2=canny_thresh2)
         if self.return_type == 'canny':
             return edges
@@ -100,8 +96,6 @@ class FeedImage():
 
         result_image = res.reshape((img.shape))
 
-        # cv2.waitKey(0)
-
         return result_image
 
     def get_img(self,img):
@@ -122,10 +116,6 @@ def centerline(result_image):
     result_image = process.get_img(result_image)
 
     gr_res = cv2.cvtColor(result_image,cv2.COLOR_BGR2GRAY)
-
-    # cv2.imshow('kk',gr_res)
-
-    # cv2.waitKey(0)
 
     (a1,a2),(con1,con2) = np.unique(gr_res,return_counts=True)
 
@@ -160,8 +150,6 @@ def image_callback(img_msg):
     
     global img_pub, pub_vel, while_loop_counts, processed_image_old
 
-    # rospy.loginfo(img_msg.header)
-
     try:
     
         cv_image = bridge.imgmsg_to_cv2(img_msg,"32FC1")
@@ -174,28 +162,13 @@ def image_callback(img_msg):
 
     roi = cv_image[120:360, 160:480]
 
-    # avg_image = cv_image.copy()
-    # if while_loop_counts%10 != 0:
-    #     avg_image = RunAvg(avg_image, 0.5, avg_image)
-
-    # else:
-
-    #     cv_image = avg_image
-    #     print("avg frame")
-
-
-
     down_vel = 0
 
     ma = np.max(roi)
 
-    # print(ma)
-
     if (ma>15):
 
         down_vel = -0.2
-
-        # print("moved down")
     
     elif ma<12:
     
@@ -213,6 +186,7 @@ def image_callback(img_msg):
     if while_loop_counts%20 == 0:
 
         processed_image, coord = centerline(cv_new[0:200,:])
+
         processed_image_old = processed_image
     
     
@@ -234,16 +208,8 @@ def image_callback(img_msg):
     
     cv2.imshow('mask',mask)
     
-    # kernel = np.ones((3, 3), np.uint8)
-    
-    # mask = cv2.erode(mask, kernel, iterations=5)
-    
-    # mask = cv2.dilate(mask, kernel, iterations=9)
-    
-    # cv2.imshow('pro',mask)
-    
-    # cv2.waitKey(0)
     _, contours_blk, _ = cv2.findContours(mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    
     contours_blk.sort(key=cv2.minAreaRect)
 
     if len(contours_blk) > 0 and cv2.contourArea(contours_blk[0]) > 5000:
