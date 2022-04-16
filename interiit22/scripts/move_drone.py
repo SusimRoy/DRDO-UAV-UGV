@@ -209,7 +209,7 @@ def image_callback(img_msg):
     cv2.imshow('mask',mask)
     
     _, contours_blk, _ = cv2.findContours(mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    
+
     contours_blk.sort(key=cv2.minAreaRect)
 
     if len(contours_blk) > 0 and cv2.contourArea(contours_blk[0]) > 5000:
@@ -247,17 +247,6 @@ def image_callback(img_msg):
         derivative_ang = angle - last_ang
         last_ang = angle
         ang_corr = -1 * (Kp_ang * angle + Ki_ang * integral_ang + kd_ang * derivative_ang)  # PID controler
-
-        # box = cv2.boxPoints(blackbox)
-        # box = np.int0(box)
-        # cv2.drawContours(cv_image, [box], 0, (0, 0, 255), 3)
-        # cv2.putText(cv_image, "Angle: " + str(angle), (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2,
-        #             cv2.LINE_AA)
-
-        # cv2.putText(cv_image, "Error: " + str(error), (10, 240), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2,
-        #             cv2.LINE_AA)
-        # cv2.line(cv_image, (int(x_min), 200), (int(x_min), 250), (255, 0, 0), 3)
-
 
         twist = Twist()
         twist.linear.x = velocity
