@@ -182,3 +182,10 @@ rosbag play bag_file_name.bag
 ```
 rosrun interiit22 move_prius.py
 ```
+###Collaborators:
+Devyani Gorkar
+Susim Mukul Roy
+Aaditya Baranwal
+Rahul Gopathi
+Sainath Reddy
+Challa Bhavani Shankar
